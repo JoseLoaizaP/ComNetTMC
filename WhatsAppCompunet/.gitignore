@@ -3,3 +3,45 @@
 
 # Ignore Gradle build output directory
 build
+# 🧱 Archivos de compilación
+/build/
+!/gradle/wrapper/gradle-wrapper.jar
+
+# 🗂️ Archivos de Gradle
+.gradle/
+.gradle-cache/
+.gradle-build/
+
+# 🧰 Archivos de IntelliJ IDEA
+.idea/
+out/
+*.iml
+
+# 🧰 Archivos de VS Code
+.vscode/
+
+# 🧾 Archivos de Eclipse
+.classpath
+.project
+.settings/
+
+# 🧮 Archivos compilados
+*.class
+*.jar
+*.war
+*.ear
+
+# 🔊 Archivos de log o temporales
+*.log
+*.tmp
+
+# ⚙️ Sistema operativo
+.DS_Store
+Thumbs.db
+
+# 🔊 Archivos de audio generados o temporales
+*.wav
+*.mp3
+
+# 🧠 Archivos JSON o de configuración local (si no quieres exponerlos)
+config.json
