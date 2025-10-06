@@ -10,25 +10,31 @@ public class TCPServer {
 
     private static final int PORT = 12345;
     private static final int THREAD_POOL_SIZE = 10;
-    
 
     public static void main(String[] args) {
-        ExecutorService pool = Executors.newFixedThreadPool
-        (THREAD_POOL_SIZE);
-         GroupManager groupManager = new GroupManager();
+        ExecutorService pool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+        GroupManager groupManager = new GroupManager();
 
-        try(ServerSocket server = new ServerSocket(PORT, 50, InetAddress.getByName("localhost"))) {
-            System.out.println("Server is running...");
+        try {
+            // 🔹 Iniciar servidor UDP en un hilo separado
+            UDPServer udpServer = new UDPServer(groupManager);
+            Thread udpThread = new Thread(() -> udpServer.start());
+            udpThread.start();
 
-            while (true) {
-                Socket clientSocket = server.accept();
-                pool.submit(new ClientHandler(clientSocket, groupManager));
+            // 🔹 Iniciar servidor TCP normalmente
+            try (ServerSocket server = new ServerSocket(PORT, 50, InetAddress.getByName("localhost"))) {
+                System.out.println("Servidor TCP corriendo en puerto " + PORT);
+
+                while (true) {
+                    Socket clientSocket = server.accept();
+                    pool.submit(new ClientHandler(clientSocket, groupManager));
+                }
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             pool.shutdown();
         }
     }
-
 }
