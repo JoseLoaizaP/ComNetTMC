@@ -33,6 +33,7 @@ public class ClientHandler implements Runnable {
             UserSession session = new UserSession(username, out);
             manager.registerUser(username, session);
 
+            // ===== Menú de comandos actualizado =====
             out.println("You are now connected. Use commands like:");
             out.println("/msg <user> <message>");
             out.println("/group <group> <message>");
@@ -42,10 +43,18 @@ public class ClientHandler implements Runnable {
             out.println("/callto <user>");
             out.println("/callgroup <group>");
             out.println("/joincall <group>");
+            out.println("/voice <user> <seconds>");
+            out.println("/voicegroup <group> <seconds>");
+            out.println("/voicefile <user> <path.wav>");
+            out.println("/voicegroupfile <group> <path.wav>");
+            out.println("/recent [N]");
             out.println("/exit");
+            // ========================================
 
             String line;
             while ((line = in.readLine()) != null) {
+
+                // ---------- TEXTO ----------
                 if (line.startsWith("/msg ")) {
                     String[] parts = line.split(" ", 3);
                     if (parts.length >= 3) {
@@ -60,9 +69,34 @@ public class ClientHandler implements Runnable {
                     if (parts.length >= 3) {
                         manager.sendGroupMessage(username, parts[1], parts[2]);
                     }
+
+                // ---------- NOTAS DE VOZ (Base64 en línea) ----------
+                } else if (line.startsWith("/voice ")) {
+                    // /voice <user> <base64>
+                    String[] parts = line.split(" ", 3);
+                    if (parts.length == 3) {
+                        String toUser = parts[1];
+                        String b64 = parts[2];
+                        manager.sendPrivateMessage(username, toUser, "[VoiceMsg] " + b64);
+                    } else {
+                        out.println("Usage: /voice <user> <base64>");
+                    }
+                } else if (line.startsWith("/voicegroup ")) {
+                    // /voicegroup <group> <base64>
+                    String[] parts = line.split(" ", 3);
+                    if (parts.length == 3) {
+                        String group = parts[1];
+                        String b64 = parts[2];
+                        manager.sendGroupMessage(username, group, "[VoiceMsg] " + b64);
+                    } else {
+                        out.println("Usage: /voicegroup <group> <base64>");
+                    }
+
                 } else {
                     out.println("Unknown command.");
                 }
+
+                // ---------- LLAMADAS UDP ----------
                 if (line.startsWith("/call ")) {
                     try {
                         // Extraer el puerto UDP que envió el cliente
@@ -159,7 +193,6 @@ public class ClientHandler implements Runnable {
                 }
                 else if (line.startsWith("/exit")) {
                     UDPClient.stopCall();
-                                
                     System.out.println("📴 Has salido de la llamada.");
                     continue;
                 }
@@ -174,6 +207,3 @@ public class ClientHandler implements Runnable {
         }
     }
 }
-
-
-
