@@ -1,0 +1,12 @@
+button{
+    padding: 8px;
+    margin: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.options {
+    border-radius: 8px;
+    border-color: red;
+    width: 50%; 
+}

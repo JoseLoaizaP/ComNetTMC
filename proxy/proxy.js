@@ -1,7 +1,18 @@
-import express from "express";
-import net from "net";
+const express = require('express');
+const net = require('net');
+const cors = require('cors');
+
+const socket = new net.Socket();
+let connected = false;
+
+socket.connect(12345, "127.0.0.1", () => {
+    // socket.write("message from nodejs\n")
+    connected = true;
+})
 
 const app = express();
+app.use(cors());
+const port = 3000;
 app.use(express.json());
 
 const BACKEND_HOST = "localhost";
@@ -133,5 +144,6 @@ app.post("/api/group", async (req, res) => {
   }
 });
 
-const PORT = 3001;
-app.listen(PORT, () => console.log(`Proxy HTTP corriendo en http://localhost:${PORT}`));
+app.listen(port, () => {
+    console.log(`API server running at http://localhost:${port}`);
+});

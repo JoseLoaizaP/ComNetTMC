@@ -26,8 +26,9 @@ public class ClientHandler implements Runnable {
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true)
         ) {
             // pedir username
-            out.println("Welcome! Enter your username:");
+            //out.println("Welcome! Enter your username:");
             username = in.readLine();
+            out.println("OK: user " + username + " connected");
 
             // registrar usuario con UserSession
             UserSession session = new UserSession(username, out);
@@ -59,6 +60,9 @@ public class ClientHandler implements Runnable {
                     String[] parts = line.split(" ", 3);
                     if (parts.length >= 3) {
                         manager.sendPrivateMessage(username, parts[1], parts[2]);
+                        out.println("OK: message sent to " + parts[1]);
+                    }else {
+                        out.println("ERR: usage /msg <user> <message>");
                     }
                 } else if (line.startsWith("/create ")) {
                     manager.createGroup(line.split(" ", 2)[1]);
