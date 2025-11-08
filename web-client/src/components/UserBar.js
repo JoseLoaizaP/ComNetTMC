@@ -9,7 +9,7 @@ function renderUserBar(user) {
     const name = document.createElement("span");
     name.className = "user-name";
     name.textContent = user.name;
-y
+
     bar.appendChild(title);
     bar.appendChild(name);
     
