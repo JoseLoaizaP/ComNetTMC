@@ -1,3 +1,4 @@
+
 const onLogin = async (username) => {
   try {
     const response = await fetch("http://localhost:3002/api/login", {
@@ -15,4 +16,26 @@ const onLogin = async (username) => {
   }
 };
 
-export default onLogin;
+const sendMessage = async (from, to, msg) => {
+  try {
+    const response = await fetch("http://localhost:3002/api/message", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from: String(from),
+        to: String(to),
+        msg: msg
+      }),
+    });
+
+    const data = await response.json();
+    console.log("Mensaje enviado:", data);
+    return data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw new Error("No se pudo enviar el mensaje.");
+  }
+};
+
+
+export {onLogin, sendMessage};

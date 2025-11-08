@@ -26,13 +26,15 @@ public class ClientHandler implements Runnable {
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true)
         ) {
             // pedir username
-  
             username = in.readLine();
-  
 
             // registrar usuario con UserSession
             UserSession session = new UserSession(username, out);
             manager.registerUser(username, session);
+
+            // ✅ ENVIAR CONFIRMACIÓN AL PROXY
+            out.println("OK: User " + username + " registered");
+            out.flush();
 
             String line;
             while ((line = in.readLine()) != null) {
@@ -43,7 +45,7 @@ public class ClientHandler implements Runnable {
                     if (parts.length >= 3) {
                         manager.sendPrivateMessage(username, parts[1], parts[2]);
                         out.println("OK: message sent to " + parts[1]);
-                    }else {
+                    } else {
                         out.println("ERR: usage /msg <user> <message>");
                     }
                 } else if (line.startsWith("/create ")) {
