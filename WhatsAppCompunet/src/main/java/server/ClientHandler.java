@@ -26,31 +26,13 @@ public class ClientHandler implements Runnable {
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true)
         ) {
             // pedir username
-            //out.println("Welcome! Enter your username:");
+  
             username = in.readLine();
-            out.println("OK: user " + username + " connected");
+  
 
             // registrar usuario con UserSession
             UserSession session = new UserSession(username, out);
             manager.registerUser(username, session);
-
-            // ===== Menú de comandos actualizado =====
-            out.println("You are now connected. Use commands like:");
-            out.println("/msg <user> <message>");
-            out.println("/group <group> <message>");
-            out.println("/join <group>");
-            out.println("/create <group>");
-            out.println("/call <UDP_port>");
-            out.println("/callto <user>");
-            out.println("/callgroup <group>");
-            out.println("/joincall <group>");
-            out.println("/voice <user> <seconds>");
-            out.println("/voicegroup <group> <seconds>");
-            out.println("/voicefile <user> <path.wav>");
-            out.println("/voicegroupfile <group> <path.wav>");
-            out.println("/recent [N]");
-            out.println("/exit");
-            // ========================================
 
             String line;
             while ((line = in.readLine()) != null) {

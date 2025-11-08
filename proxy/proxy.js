@@ -12,7 +12,7 @@ socket.connect(12345, "127.0.0.1", () => {
 
 const app = express();
 app.use(cors());
-const port = 3000;
+const port = 3002;
 app.use(express.json());
 
 const BACKEND_HOST = "localhost";
@@ -33,7 +33,7 @@ function getClient(username) {
         
         socket.connect(BACKEND_PORT, BACKEND_HOST, () => {
             console.log(`[TCP] Conectado para usuario ${username}`);
-            socket.write(username + "\n"); // el servidor pide el nombre al inicio
+            socket.write(username + "\n");
         });
     
         socket.on("data", (data) => {
@@ -85,11 +85,16 @@ app.post("/api/login", async (req, res) => {
     if (!username) return res.status(400).json({ error: "Username requerido" });
     
     try {
-        await getClient(username);
-        res.json({ status: "ok", message: `Usuario ${username} conectado.` });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+    await getClient(username);
+    console.log(`[HTTP] Usuario ${username} conectado`);
+    res.json({
+      status: "ok",
+      user: { name: username }
+    });
+  } catch (err) {
+    console.error("Error en /api/login:", err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // enviar mensaje privado
