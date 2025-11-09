@@ -19,36 +19,81 @@ export const renderChatPage = (username, contact) => {
   messagesDiv.classList.add("messages");
   chatContainer.appendChild(messagesDiv);
 
-  // Campo de texto
+  // ---- util de render ----
+  const append = (kind, text) => {
+    const div = document.createElement("div");
+    div.classList.add("msg", kind); // 'sent' | 'received' | 'system' | 'error'
+    div.textContent = text;
+    messagesDiv.appendChild(div);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  };
+
+  // ===== Stream en tiempo real (SSE) por usuario =====
+  // Cerramos un stream previo del mismo usuario si existía (evita streams duplicados al navegar)
+  try {
+    if (window.__chatSSE && window.__chatSSE.username === username) {
+      try { window.__chatSSE.es.close(); } catch {}
+    }
+  } catch {}
+
+  const sseUrl = `http://localhost:3002/api/stream?username=${encodeURIComponent(username)}`;
+  const es = new EventSource(sseUrl);
+  window.__chatSSE = { es, username };
+
+  es.onmessage = (ev) => {
+    try {
+      const payload = JSON.parse(ev.data);
+      if (!payload) return;
+      if (payload.hello) {
+        append("system", `Conectado como ${payload.hello}`);
+        return;
+      }
+      if (payload.line) {
+        // Mostramos la línea cruda del servidor para máxima compatibilidad
+        append("received", payload.line);
+      }
+    } catch {
+      // si no es JSON válido, lo ignoramos
+    }
+  };
+
+  es.addEventListener("error", () => {
+    append("error", "Stream desconectado. Revisa el proxy o el servidor.");
+  });
+
+  es.addEventListener("close", () => {
+    append("system", "Conexión con el servidor cerrada.");
+  });
+
+  // ---- Entrada de texto ----
   const input = document.createElement("input");
   input.placeholder = "Escribe un mensaje...";
   input.classList.add("chat-input");
 
-  // Botón enviar
   const sendBtn = document.createElement("button");
   sendBtn.textContent = "Enviar";
   sendBtn.classList.add("chat-send");
 
-  sendBtn.addEventListener("click", async () => {
+  const doSend = async () => {
     const msg = input.value.trim();
     if (!msg) return;
-    console.log("DEBUG username:", username);
-    console.log("DEBUG contact:", contact);
-
 
     try {
-      
+      // Tu servicio actual: sendMessage(from, to, msg)
       await sendMessage(username, contact, msg);
 
-      const msgDiv = document.createElement("div");
-      msgDiv.classList.add("msg", "sent");
-      msgDiv.textContent = msg;
-      messagesDiv.appendChild(msgDiv);
+      append("sent", `(a ${contact}) ${msg}`);
       input.value = "";
+      input.focus();
     } catch (err) {
       console.error("Error enviando mensaje:", err);
-      alert("No se pudo enviar el mensaje.");
+      append("error", "No se pudo enviar el mensaje.");
     }
+  };
+
+  sendBtn.addEventListener("click", doSend);
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") doSend();
   });
 
   chatContainer.appendChild(input);
@@ -56,4 +101,3 @@ export const renderChatPage = (username, contact) => {
 
   app.appendChild(chatContainer);
 };
-

@@ -21,7 +21,7 @@ export function renderWelcome() {
       const data = await onLogin(name);
       if (data.status === "ok") {
         localStorage.setItem("username", name); // ✅ guarda usuario actual
-        window.location.hash = "#/home";       // ✅ navega al home
+        window.location.hash = "#/home";        // ✅ navega al home
       } else {
         alert("Error al crear el usuario");
       }
@@ -44,6 +44,20 @@ export async function renderHomePage(username) {
   const userbar = renderUserBar(user);
   app.appendChild(userbar);
 
+  // 🔹 Nav acciones rápidas (incluye botón de Grupos)
+  const actions = document.createElement("div");
+  actions.classList.add("home-actions");
+
+  const btnGroups = document.createElement("button");
+  btnGroups.textContent = "Grupos";
+  btnGroups.classList.add("btn");
+  btnGroups.addEventListener("click", () => {
+    window.location.hash = "#/groups";
+  });
+
+  actions.appendChild(btnGroups);
+  app.appendChild(actions);
+
   // 🔹 Mensaje de bienvenida
   const content = document.createElement("div");
   content.classList.add("home-content");
@@ -65,8 +79,8 @@ export async function renderHomePage(username) {
     const ul = document.createElement("ul");
 
     users
-      .filter(u => u.username !== username) // ✅ no mostrar al propio usuario
-      .forEach(u => {
+      .filter((u) => u.username !== username) // ✅ no mostrar al propio usuario
+      .forEach((u) => {
         const li = document.createElement("li");
         li.textContent = u.username;
         li.classList.add("user-item");
@@ -86,7 +100,6 @@ export async function renderHomePage(username) {
     } else {
       userListDiv.appendChild(ul);
     }
-
   } catch (err) {
     console.error("Error al cargar usuarios:", err);
     userListDiv.textContent = "Error al obtener usuarios.";
