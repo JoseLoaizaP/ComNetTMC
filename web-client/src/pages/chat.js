@@ -5,16 +5,21 @@ export const renderChatPage = (username, contact) => {
   const app = document.getElementById("app");
   app.innerHTML = "";
 
+  // 🔹 Barra superior del usuario
   const userbar = renderUserBar({ name: username });
   app.appendChild(userbar);
 
+  // 🔹 Contenedor principal del chat
   const chatContainer = document.createElement("div");
   chatContainer.classList.add("chat-container");
 
+  // 🔹 Título
   const title = document.createElement("h3");
   title.textContent = `Chat con ${contact}`;
+  title.classList.add("chat-title");
   chatContainer.appendChild(title);
 
+  // 🔹 Área de mensajes
   const messagesDiv = document.createElement("div");
   messagesDiv.classList.add("messages");
   chatContainer.appendChild(messagesDiv);
@@ -22,14 +27,13 @@ export const renderChatPage = (username, contact) => {
   // ---- util de render ----
   const append = (kind, text) => {
     const div = document.createElement("div");
-    div.classList.add("msg", kind); // 'sent' | 'received' | 'system' | 'error'
+    div.classList.add("msg", kind); // sent | received | system | error
     div.textContent = text;
     messagesDiv.appendChild(div);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
   };
 
-  // ===== Stream en tiempo real (SSE) por usuario =====
-  // Cerramos un stream previo del mismo usuario si existía (evita streams duplicados al navegar)
+  // ===== Stream SSE =====
   try {
     if (window.__chatSSE && window.__chatSSE.username === username) {
       try { window.__chatSSE.es.close(); } catch {}
@@ -49,39 +53,32 @@ export const renderChatPage = (username, contact) => {
         return;
       }
       if (payload.line) {
-        // Mostramos la línea cruda del servidor para máxima compatibilidad
         append("received", payload.line);
       }
-    } catch {
-      // si no es JSON válido, lo ignoramos
-    }
+    } catch {}
   };
 
-  es.addEventListener("error", () => {
-    append("error", "Stream desconectado. Revisa el proxy o el servidor.");
-  });
+  es.addEventListener("error", () => append("error", "Stream desconectado."));
+  es.addEventListener("close", () => append("system", "Conexión cerrada."));
 
-  es.addEventListener("close", () => {
-    append("system", "Conexión con el servidor cerrada.");
-  });
+  // 🔹 Caja de envío de mensaje
+  const inputContainer = document.createElement("div");
+  inputContainer.classList.add("chat-input-container");
 
-  // ---- Entrada de texto ----
   const input = document.createElement("input");
   input.placeholder = "Escribe un mensaje...";
   input.classList.add("chat-input");
 
   const sendBtn = document.createElement("button");
   sendBtn.textContent = "Enviar";
-  sendBtn.classList.add("chat-send");
+  sendBtn.classList.add("btn");
 
   const doSend = async () => {
     const msg = input.value.trim();
     if (!msg) return;
 
     try {
-      // Tu servicio actual: sendMessage(from, to, msg)
       await sendMessage(username, contact, msg);
-
       append("sent", `(a ${contact}) ${msg}`);
       input.value = "";
       input.focus();
@@ -96,8 +93,9 @@ export const renderChatPage = (username, contact) => {
     if (e.key === "Enter") doSend();
   });
 
-  chatContainer.appendChild(input);
-  chatContainer.appendChild(sendBtn);
+  inputContainer.appendChild(input);
+  inputContainer.appendChild(sendBtn);
+  chatContainer.appendChild(inputContainer);
 
   app.appendChild(chatContainer);
 };

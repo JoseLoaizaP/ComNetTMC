@@ -14,11 +14,12 @@ export const renderGroupsPage = (username) => {
 
   const h = document.createElement("h3");
   h.textContent = "Grupos";
+  h.classList.add("list-title");
   box.appendChild(h);
 
   // Crear grupo
   const row = document.createElement("div");
-  row.classList.add("row");
+  row.classList.add("row", "home-content");
 
   const inp = document.createElement("input");
   inp.placeholder = "Nombre del grupo (ej. ventas)";
@@ -26,7 +27,7 @@ export const renderGroupsPage = (username) => {
 
   const btnCreate = document.createElement("button");
   btnCreate.textContent = "Crear";
-  btnCreate.classList.add("chat-send");
+  btnCreate.classList.add("btn");
 
   row.appendChild(inp);
   row.appendChild(btnCreate);
@@ -53,11 +54,12 @@ export const renderGroupsPage = (username) => {
         li.classList.add("msg");
 
         const name = document.createElement("span");
+        name.classList.add("user-item")
         name.textContent = g;
 
         const join = document.createElement("button");
         join.textContent = "Unirme";
-        join.classList.add("chat-send");
+        join.classList.add("btn");
         join.style.marginLeft = "8px";
         join.addEventListener("click", async () => {
           try {
@@ -70,7 +72,7 @@ export const renderGroupsPage = (username) => {
 
         const open = document.createElement("button");
         open.textContent = "Abrir";
-        open.classList.add("chat-send");
+        open.classList.add("btn");
         open.style.marginLeft = "8px";
         open.addEventListener("click", () => {
           window.location.hash = `#/g/${encodeURIComponent(g)}`;

@@ -175,7 +175,6 @@ app.post('/api/create', async (req, res) => {
       return res.json({ ok: true, response });
     }
 
-    // Si parece comando desconocido o fallo clásico, intentamos /join (autocreación)
     const looksUnknown = /ERR|unknown|invalid|no\s+such|not\s+found/i.test(response);
     if (looksUnknown) {
       response = await sendCommand(from, `/join ${group}`);
@@ -189,10 +188,9 @@ app.post('/api/create', async (req, res) => {
       }
     }
 
-    // Como último recurso: mandar un primer mensaje al grupo (algunos servers “crean” así)
     response = await sendCommand(from, `/group ${group} [system] grupo creado`);
     console.log(`[CREATE→GROUPMSG][resp] ${JSON.stringify(response)}`);
-    // No podemos saber con certeza si fue éxito, pero añadimos y anunciamos
+
     if (!groups.has(group)) {
       groups.add(group);
       broadcastGroups();

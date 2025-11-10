@@ -27,6 +27,7 @@ export const renderGroupChatPage = (username, group) => {
 
     // Título
     const title = document.createElement("h3");
+    title.classList.add("chat-title");
     title.textContent = `Grupo: ${group}`;
     chatContainer.appendChild(title);
 
@@ -91,12 +92,12 @@ export const renderGroupChatPage = (username, group) => {
 
     // Entrada y envío
     const input = document.createElement("input");
-    input.placeholder = `Mensaje para ${group}…`;
     input.classList.add("chat-input");
+    input.placeholder = `Mensaje para ${group}…`;
 
     const sendBtn = document.createElement("button");
     sendBtn.textContent = "Enviar";
-    sendBtn.classList.add("chat-send");
+    sendBtn.classList.add("btn");
 
     const doSend = async () => {
       const msg = input.value.trim();
@@ -119,8 +120,12 @@ export const renderGroupChatPage = (username, group) => {
     sendBtn.addEventListener("click", doSend);
     input.addEventListener("keydown", (e) => { if (e.key === "Enter") doSend(); });
 
-    chatContainer.appendChild(input);
-    chatContainer.appendChild(sendBtn);
+    const inputContainer = document.createElement("div");
+      inputContainer.classList.add("chat-input-container");
+
+    inputContainer.appendChild(input);
+    inputContainer.appendChild(sendBtn);
+    chatContainer.appendChild(inputContainer);
   } catch (e) {
     console.error("[GroupChat] excepción al renderizar:", e);
     const err = document.createElement("div");
