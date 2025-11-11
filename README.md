@@ -14,6 +14,13 @@ Ejecutar el cliente web:
 npx serve web-client
 Este comando inicia la aplicación web desde el navegador, permitiendo a los usuarios interactuar con el sistema.
 
+Primero se ve la pantalla del login, donde al escribir un nombre se genera un usuario. Si se regresa y se escribe un nombre diferente, se creará otro usuario distinto.
+Desde el usuario 1 se pueden ver todos los usuarios existentes, excepto a sí mismo.
+Para hablar directamente con alguien, solo se debe hacer clic en el nombre de la persona deseada, lo que llevará al chat personal.
+
+En cuanto a los chats grupales, al presionar el botón “Grupos” se mostrarán todos los grupos existentes (si los hay).
+El sistema también permite crear nuevos grupos y, cuando ya existen, añadir personas a ellos.
+
 **Descripción del flujo de comunicación entre cliente, proxy y backend**
 ---
 
