@@ -81,6 +81,6 @@ Si se trata de un mensaje grupal, GroupManager distribuye el texto a todos los m
 Integrantes del grupo
 ---
 
-José David Loaiza
-Laura Buitrago
-Juan Pablo Bello
+- José David Loaiza
+- Laura Buitrago
+- Juan Pablo Bello
